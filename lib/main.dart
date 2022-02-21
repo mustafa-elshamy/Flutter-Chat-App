@@ -8,8 +8,6 @@ import 'views/chat_room.dart';
 import 'views/switch_page.dart';
 import 'widgets/widget.dart';
 
-
-
 void main() {
   runApp(MyApp());
 }
