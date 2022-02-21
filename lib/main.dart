@@ -1,19 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/chat_bloc/chat_bloc.dart';
 import 'bloc/chat_room_bloc/chat_room_bloc.dart';
 import 'bloc/data_bloc/data_bloc.dart';
-import 'helper/helper_functions.dart';
-import 'data/model/user.dart';
-import 'data/services/authentication.dart';
-import 'data/services/database.dart';
 import 'views/chat_room.dart';
-import 'views/search_page.dart';
-import 'views/signin.dart';
-import 'views/signup.dart';
 import 'views/switch_page.dart';
 import 'widgets/widget.dart';
 
