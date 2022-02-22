@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'bloc/chat_bloc/chat_bloc.dart';
 import 'bloc/chat_room_bloc/chat_room_bloc.dart';
 import 'bloc/data_bloc/data_bloc.dart';
 import 'views/chat_room.dart';
 import 'views/switch_page.dart';
-import 'widgets/widget.dart';
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final storage = await HydratedStorage.build(
+      storageDirectory: await getApplicationDocumentsDirectory());
 
-void main() {
-  runApp(MyApp());
+  HydratedBlocOverrides.runZoned(() => runApp(MyApp()), storage: storage);
 }
 
 class MyApp extends StatefulWidget {
@@ -45,8 +49,6 @@ class _MyAppState extends State<MyApp> {
           builder: (context, state) {
             if (state is LoginInState) {
               return ChatRoom(state.currentUser);
-            } else if (state is LoadingState) {
-              return Loading("Connecting to Firebase...");
             }
             return SwitchPage();
           },

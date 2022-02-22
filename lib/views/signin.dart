@@ -1,17 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
-import '../bloc/chat_room_bloc/chat_room_bloc.dart';
 import '../bloc/data_bloc/data_bloc.dart';
-import '../bloc/data_bloc/data_bloc.dart';
-import '../helper/helper_functions.dart';
-import '../data/model/user.dart';
-import '../data/services/authentication.dart';
-import '../data/services/database.dart';
 import '../widgets/widget.dart';
-import 'chat.dart';
 import 'chat_room.dart';
 
 class SignIn extends StatefulWidget {

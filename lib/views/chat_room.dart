@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../bloc/chat_room_bloc/chat_room_bloc.dart';
 import '../bloc/data_bloc/data_bloc.dart';
@@ -27,7 +28,6 @@ class _ChatRoomState extends State<ChatRoom> {
   @override
   void initState() {
     super.initState();
-
     BlocProvider.of<ChatRoomBloc>(context)
         .add(SyncChatRoomEvent(email: widget.currentUser.email));
   }
@@ -105,7 +105,7 @@ class _ChatRoomState extends State<ChatRoom> {
                   MaterialPageRoute(
                       builder: (context) => SearchPage(widget.currentUser)));
             },
-            child: Icon(
+            child: const Icon(
               Icons.add,
               color: Colors.white,
             ),

@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
@@ -9,15 +10,12 @@ import 'package:meta/meta.dart';
 import '../../data/model/chat_item.dart';
 import '../../data/model/user.dart';
 import '../../data/repos/database_repo.dart';
-import '../../data/services/database.dart';
-import '../data_bloc/data_bloc.dart';
 
 part 'chat_room_event.dart';
-
 part 'chat_room_state.dart';
 
 class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
-  final DatabaseRepo _databaseRepo = DatabaseRepo();
+  DatabaseRepo _databaseRepo = DatabaseRepo();
   var chatsStream;
 
   ChatRoomBloc() : super(ChatRoomInitialState()) {
@@ -25,6 +23,7 @@ class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
       if (event is ChatRoomLogoutEvent) {
         emit(ChatRoomLogoutState());
       } else if (event is SyncChatRoomEvent) {
+        if (Firebase.apps.isEmpty) await _initializeFirebase();
         await _linkStream(event.email);
         add(LoadChatsEvent());
       } else if (event is LoadChatsEvent) {
@@ -38,8 +37,14 @@ class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
     });
   }
 
+  Future _initializeFirebase() async {
+    return await Firebase.initializeApp();
+  }
+
   Future _linkStream(String email) async {
-    await _databaseRepo.getChatRooms(email).then((value) => chatsStream = value);
+    await _databaseRepo.getChatRooms(email).then((value) {
+      chatsStream = value;
+    });
   }
 
   ChatItem getChatRoomItem(snapshot, index, email) {

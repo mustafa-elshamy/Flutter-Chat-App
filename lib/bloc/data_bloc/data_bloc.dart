@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../data/repos/authentication_repo.dart';
@@ -16,13 +18,15 @@ part 'data_event.dart';
 
 part 'data_state.dart';
 
-class DataBloc extends Bloc<DataEvent, DataState> {
+class DataBloc extends HydratedBloc<DataEvent, DataState> {
   AuthRepo _authRepo;
   final DatabaseRepo _databaseRepo = DatabaseRepo();
 
   DataBloc() : super(InitialDataState()) {
+    print("state of super ${(state as LoginInState).currentUser.email}");
     on<DataEvent>((event, emit) async {
       print("data bloc event: $event");
+      if (state != null) add(SignInEvent());
       if (event is CheckAlreadyLoginEvent) {
         var isLogin = await _trySignIn();
         if (isLogin is ChatUser) {
@@ -58,7 +62,7 @@ class DataBloc extends Bloc<DataEvent, DataState> {
       else if (event is InitializeFirebase) {
         await _initializeFirebase().then((value) {
           emit(LogoutState());
-          add(CheckAlreadyLoginEvent());
+          //add(CheckAlreadyLoginEvent());
         });
       }
 
@@ -73,6 +77,7 @@ class DataBloc extends Bloc<DataEvent, DataState> {
         emit(LogoutState());
       }
     });
+//    startWithSavedState();
   }
 
   Future _initializeFirebase() async {
@@ -149,5 +154,32 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     await HelperFunctions.removeUserEMAIL();
     await HelperFunctions.removeUserPassword();
     return true;
+  }
+
+  @override
+  DataState fromJson(Map<String, dynamic> json) {
+    if (json.isNotEmpty) {
+      print(json.toString());
+      return LoginInState.fromMap(json);
+    }
+  }
+
+  @override
+  Map<String, dynamic> toJson(DataState state) {
+    if (state is LoginInState) {
+      print("state was Login >>>>>>>>>>>>>>>>>>>");
+      return state.toMap();
+    }
+    print("state was not Login !!!!!!!!");
+    return null;
+  }
+
+  void startWithSavedState() {
+    if (state != null && state is LoginInState) {
+      LoginInState loginInState = state;
+      add(SignInEvent(
+          email: loginInState.currentUser.email,
+          password: loginInState.currentUser.password));
+    }
   }
 }
